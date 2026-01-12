@@ -45,51 +45,34 @@
                                         </tfoot>
 
                     <?php
-                        require_once ('../backend/conecdb.php');                        
+                        // Single query with JOINs - much more efficient than N+1 queries
+                        $stmt = $conex->prepare("SELECT s.*, u.username, m.movie_name 
+                                                 FROM sales s 
+                                                 INNER JOIN users u ON s.user_id = u.user_id 
+                                                 INNER JOIN movies m ON s.movie_id = m.movie_id");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM sales;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                $mid = $row['movie_id'];
-                                $uid = $row['user_id'];
-
-                                $mquery = "SELECT movie_name FROM movies WHERE movie_id = '$mid';";
-                                $mresult = mysqli_query($conex,$mquery);
-                                $mrow = mysqli_fetch_assoc($mresult);
-                                $mname = $mrow['movie_name'];
-
-                                $uquery = "SELECT username FROM users WHERE user_id = '$uid';";
-                                $uresult = mysqli_query($conex,$uquery);
-                                $urow = mysqli_fetch_assoc($uresult);
-                                $user = $urow['username'];
-
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['sales_id']}</td>
-                                <td>{$row['sales_date']}</td>
-                                <td><a href="userinfo.php?user={$uid}">{$user}</a></td>
-                                <td>{$row['payment_method']}</td>
-                                <td>{$row['card_number']}</td>
-                                <td>{$row['card_expiration']}</td>
-                                <td>{$row['card_name']}</td>
-                                <td>{$mname}</td>
-                                <td>$ {$row['amount']}</td>
-                                <td><a href="receipts.php?sid={$row['sales_id']}">Receipt</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['sales_id']}</td>
+                            <td>{$row['sales_date']}</td>
+                            <td><a href="userinfo.php?user={$row['user_id']}">{$row['username']}</a></td>
+                            <td>{$row['payment_method']}</td>
+                            <td>{$row['card_number']}</td>
+                            <td>{$row['card_expiration']}</td>
+                            <td>{$row['card_name']}</td>
+                            <td>{$row['movie_name']}</td>
+                            <td>$ {$row['amount']}</td>
+                            <td><a href="receipts.php?sid={$row['sales_id']}">Receipt</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>

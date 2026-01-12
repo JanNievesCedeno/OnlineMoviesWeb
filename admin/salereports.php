@@ -4,40 +4,27 @@ function fetch_data ()
 {
     require_once ('../backend/conecdb.php');
     $output = '';
-    $query = "SELECT * FROM sales;";
-    $result = mysqli_query($conex,$query);
-    $resultCheck = mysqli_num_rows($result);
-    if($resultCheck > 0){
+    
+    // Single query with JOINs - much more efficient than N+1 queries
+    $stmt = $conex->prepare("SELECT s.sales_id, u.username, m.movie_name, s.sales_date, s.amount 
+                             FROM sales s 
+                             INNER JOIN users u ON s.user_id = u.user_id 
+                             INNER JOIN movies m ON s.movie_id = m.movie_id");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    while($row = mysqli_fetch_assoc($result))
+    while($row = $result->fetch_assoc())
     {
-        $uid = $row["user_id"];
-        $mid = $row["movie_id"];
-
-
-        $uquery = "SELECT username FROM users WHERE user_id = $uid;";
-        $uresult = mysqli_query($conex,$uquery);
-        $urow = mysqli_fetch_assoc($uresult);
-        $uname = $urow['username'];
-
-
-        $mquery = "SELECT movie_name FROM movies WHERE movie_id = $mid;";
-        $mresult = mysqli_query($conex,$mquery);
-        $mrow = mysqli_fetch_assoc($mresult);
-        $mname = $mrow['movie_name']; 
-
-
         $output .= '<tr>
             <td> '.$row["sales_id"].'</td>
-            <td> '.$uname.'</td>
-            <td> '.$mname.'</td>
+            <td> '.$row["username"].'</td>
+            <td> '.$row["movie_name"].'</td>
             <td> '.$row["sales_date"].'</td>
             <td> $ '.$row["amount"].'</td>
             </tr>
             ';
     }
     return $output; 
-}
 }
 
 
@@ -75,6 +62,3 @@ function fetch_data ()
     $content .= '</table>';
     $pdf->writeHTML ($content);
     $pdf->Output();
-
-
-

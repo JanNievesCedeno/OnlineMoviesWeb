@@ -4,12 +4,12 @@ function fetch_data ()
 {
     require_once ('../backend/conecdb.php');
     $output = '';
-    $query = "SELECT user_id, user_firstname, user_lastname, username, money_spent, movies_owned FROM users ;";
-    $result = mysqli_query($conex,$query);
-    $resultCheck = mysqli_num_rows($result);
-    if($resultCheck > 0){
+    
+    $stmt = $conex->prepare("SELECT user_id, user_firstname, user_lastname, username, money_spent, movies_owned FROM users");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    while($row = mysqli_fetch_assoc($result))
+    while($row = $result->fetch_assoc())
     {
         $output .= '<tr>
             <td> '.$row["user_id"].'</td>
@@ -22,7 +22,6 @@ function fetch_data ()
             ';
     }
     return $output; 
-}
 }
 
 
@@ -61,6 +60,3 @@ function fetch_data ()
     $content .= '</table>';
     $pdf->writeHTML ($content);
     $pdf->Output();
-
-
-

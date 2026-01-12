@@ -1,32 +1,43 @@
 <?php
 
 session_start();
-if(isset($_SESSION['username'])) {
-    require_once 'conecdb.php';
+require_once 'conecdb.php';
 
+
+if(isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+
+	// Get User ID from the session username
     $user = $_SESSION['username'];
-    $users = "SELECT * FROM users WHERE username = '$user';";
-    $result = mysqli_query($conex,$users);
-    $resultCheck = mysqli_num_rows($result);
+
+    $stmt = $conex->prepare("SELECT user_id FROM users WHERE username = ?");
+	$stmt->bind_param('s', $user);
+	$stmt->execute();
+    $result = $stmt->get_result();
+    $resultCheck = $result->num_rows;
 
     if ($resultCheck > 0){
-        $row = mysqli_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $userid = $row['user_id'];
         
     }
 }else {
    header('Location: ../login.php');
+   exit();
 }
 	if (isset($_POST['checkout'])) {
-		require_once 'conecdb.php';
 
-		$movie = $_POST['movieid'];     
-        $movies = "SELECT * FROM movies WHERE movie_id = '$movie';";
-        $result = mysqli_query($conex,$movies);
-        $resultCheck = mysqli_num_rows($result);
+		// Get the movie id from the form
+		$movie = $_POST['movieid']; 
+		
+		
+        $stmt = $conex->prepare("SELECT * FROM movies WHERE movie_id = ?");
+		$stmt->bind_param('i', $movie);
+		$stmt->execute();
+        $result = $stmt->get_result();
+        $resultCheck = $result->num_rows;
 
         if ($resultCheck > 0){
-            $row = mysqli_fetch_assoc($result);
+            $row = $result->fetch_assoc();
             $moviename = $row['movie_name'];
             $moviecost = $row['movie_cost'];
             

@@ -1,34 +1,37 @@
 <?php
 
-
+require_once 'conecdb.php';
 
 if (isset($_POST['register'])) {
-
-	require_once 'conecdb.php';
 	
 	if (strlen($_POST['first-name']) >= 2 && strlen($_POST['last-name']) >= 2 && strlen($_POST['username']) >=2 && strlen($_POST['password']) >=5 ) {
 
+		// Sanitize and validate input from the form
 		$user_firstname = trim($_POST['first-name']);
 		$user_lastname = trim($_POST['last-name']);
 		$username = ($_POST['username']);
-			$query = "SELECT username FROM users;";
-			$result = mysqli_query($conex,$query);
-			$resultCheck = mysqli_num_rows($result);
-			while ($row = mysqli_fetch_assoc($result)) {
-			
-			if ($row['username'] == $username) {
-				echo '<script> alert("Username taken!")</script>';
-				echo '<script type="text/javascript">';
-        		echo 'window.history.back();';
-        		echo '</script>';
-        		die();
-				}
-			}
+
+		// Check if username exists using WHERE clause
+		$stmt = $conex->prepare("SELECT username FROM users WHERE username = ?");
+		$stmt->bind_param("s", $username);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			echo '<script> alert("Username taken!")</script>';
+			echo '<script type="text/javascript">';
+			echo 'window.history.back();';
+			echo '</script>';
+			exit();
+		}
 
 		$password = trim($_POST['password']);
 		$encrypted = password_hash($password, PASSWORD_DEFAULT);
-		$consulta = "INSERT INTO users(user_firstname, user_lastname, username, password) VALUES ('$user_firstname','$user_lastname','$username','$encrypted')";
-		$resultado = mysqli_query($conex,$consulta);
+
+		// Use prepared statement for INSERT
+		$stmt = $conex->prepare("INSERT INTO users(user_firstname, user_lastname, username, password) VALUES (?, ?, ?, ?)");
+		$stmt->bind_param("ssss", $user_firstname, $user_lastname, $username, $encrypted);
+		$resultado = $stmt->execute();
 
 		if ($resultado) {
 			echo '<script> alert("Successfully registered!")</script>';

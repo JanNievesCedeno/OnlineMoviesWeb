@@ -40,37 +40,28 @@
                                         </tfoot>
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM users");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM users;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['user_id']}</td>
-                                <td>{$row['user_firstname']}</td>
-                                <td>{$row['user_lastname']}</td>
-                                <td>{$row['username']}</td>
-                                <td><textarea class="txa" name="" id="" cols="20" rows="4">{$row['password']}</textarea></td>
-                                <td>$ {$row['money_spent']}</td>
-                                <td>{$row['movies_owned']}</td>
-                                <td><a href="interedit.php?action=user&id={$row['user_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=user&id={$row['user_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['user_id']}</td>
+                            <td>{$row['user_firstname']}</td>
+                            <td>{$row['user_lastname']}</td>
+                            <td>{$row['username']}</td>
+                            <td><textarea class="txa" name="" id="" cols="20" rows="4">{$row['password']}</textarea></td>
+                            <td>$ {$row['money_spent']}</td>
+                            <td>{$row['movies_owned']}</td>
+                            <td><a href="interedit.php?action=user&id={$row['user_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=user&id={$row['user_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>
