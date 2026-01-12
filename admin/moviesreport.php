@@ -4,12 +4,12 @@ function fetch_data ()
 {
     require_once ('../backend/conecdb.php');
     $output = '';
-    $query = "SELECT movie_id, movie_amount, movie_name, movie_year, movie_genre, movie_cost FROM movies ;";
-    $result = mysqli_query($conex,$query);
-    $resultCheck = mysqli_num_rows($result);
-    if($resultCheck > 0){
+    
+    $stmt = $conex->prepare("SELECT movie_id, movie_amount, movie_name, movie_year, movie_genre, movie_cost FROM movies");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    while($row = mysqli_fetch_assoc($result))
+    while($row = $result->fetch_assoc())
     {
         $output .= '<tr>
             <td> '.$row["movie_id"].'</td>
@@ -22,7 +22,6 @@ function fetch_data ()
             ';
     }
     return $output; 
-}
 }
 
 
@@ -61,6 +60,3 @@ function fetch_data ()
     $content .= '</table>';
     $pdf->writeHTML ($content);
     $pdf->Output();
-
-
-

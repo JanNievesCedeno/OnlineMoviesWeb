@@ -1,33 +1,44 @@
 <?php 
     echo '<link href="../rec.css" type="text/css" rel="stylesheet">';
     echo '<link href="../style.css" type="text/css" rel="stylesheet">';
-session_start();
-if(isset($_SESSION['username'])) {
-    require_once 'conecdb.php';
 
+session_start();
+require_once 'conecdb.php';
+
+if(isset($_SESSION['username'])) {
+
+    // Get User ID from the session username
     $user = $_SESSION['username'];
-    $users = "SELECT * FROM users WHERE username = '$user';";
-    $result = mysqli_query($conex,$users);
-    $resultCheck = mysqli_num_rows($result);
+
+    // Fetch user ID
+    $stmt = $conex->prepare("SELECT user_id FROM users WHERE username = ?;");
+    $stmt->bind_param("s", $user);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $resultCheck = $result->num_rows;
 
     if ($resultCheck > 0){
-        $row = mysqli_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $userid = $row['user_id'];
         
     }
 }else {
    header('Location: ../login.php');
+   exit();
 }
 
     if (isset($_POST['buy'])) {
-             
-        $movie = $_POST['movieid'];     
-        $movies = "SELECT * FROM movies WHERE movie_id = '$movie';";
-        $result = mysqli_query($conex,$movies);
-        $resultCheck = mysqli_num_rows($result);
+        // Get the movie id from the form 
+        $movie = $_POST['movieid'];   
+
+        $stmt = $conex->prepare("SELECT * FROM movies WHERE movie_id = ?;");
+        $stmt->bind_param("i", $movie);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $resultCheck = $result->num_rows;
 
         if ($resultCheck > 0){
-            $row = mysqli_fetch_assoc($result);
+            $row = $result->fetch_assoc();
             $movieid = $row['movie_id'];
            } 
 
@@ -40,9 +51,11 @@ if(isset($_SESSION['username'])) {
             $cardname = $_POST['ncard'];
             $amount = $row['movie_cost'];
              
-            $sales =  "SELECT * FROM sales WHERE user_id = '$userid' and movie_id = '$movieid';"; 
-            $result = mysqli_query($conex,$sales);
-            $resultCheck = mysqli_num_rows($result);
+            $stmt = $conex->prepare("SELECT * FROM sales WHERE user_id = ? and movie_id = ?;");
+            $stmt->bind_param("ii", $userid, $movieid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $resultCheck = $result->num_rows;
     
             if ($resultCheck > 0){
                      
@@ -55,43 +68,56 @@ if(isset($_SESSION['username'])) {
             
             }else {
 
-                    $query = "INSERT INTO sales(user_id, movie_id, sales_date, payment_method, card_number, card_expiration, card_name, amount) VALUES ('$userid','$movieid','$date','$method','$cardnumber','$expdate','$cardname','$amount');";
-                    $execute = mysqli_query($conex, $query);
+                    $stmt = $conex->prepare("INSERT INTO sales(user_id, movie_id, sales_date, payment_method, card_number, card_expiration, card_name, amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+                    $stmt->bind_param("iissssss", $userid, $movieid, $date, $method, $cardnumber, $expdate, $cardname, $amount);
+                    $execute = $stmt->execute();
 
 
                     if ($execute) {
 
-                        $mminus = "SELECT movie_amount FROM movies WHERE movie_id = '$movieid';";
-                        $result = mysqli_query($conex,$mminus);
-                        $resultCheck = mysqli_num_rows($result);
-                        $row = mysqli_fetch_assoc($result);
+                        $stmt = $conex->prepare("SELECT movie_amount FROM movies WHERE movie_id = ?;");
+                        $stmt->bind_param("i", $movieid);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $resultCheck = $result->num_rows;
+                        $row = $result->fetch_assoc();
                         $mamount = $row['movie_amount'] - 1;
 
-                        $run = "UPDATE movies SET movie_amount='$mamount' WHERE movie_id = '$movieid';";
-                        $result = mysqli_query($conex,$run);
+                        $stmt = $conex->prepare("UPDATE movies SET movie_amount=? WHERE movie_id = ?;");
+                        $stmt->bind_param("ii", $mamount, $movieid);
+                        $stmt->execute();
                         
 
-                        $movie = "SELECT SUM(amount) as moneys FROM sales WHERE user_id = '$userid';";
-                        $result = mysqli_query($conex,$movie);
-                        $resultCheck = mysqli_num_rows($result);
-                        $row = mysqli_fetch_assoc($result);
+                        $stmt = $conex->prepare("SELECT SUM(amount) as moneys FROM sales WHERE user_id = ?;");
+                        $stmt->bind_param("i", $userid);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $resultCheck = $result->num_rows;
+                        $row = $result->fetch_assoc();
                         $money = $row['moneys'];
 
-                        $count = "SELECT * FROM sales WHERE user_id = '$userid';";
-                        $result = mysqli_query($conex,$count);
-                        $resultCheck = mysqli_num_rows($result);  
+                        $stmt = $conex->prepare("SELECT * FROM sales WHERE user_id = ?;");
+                        $stmt->bind_param("i", $userid);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $resultCheck = $result->num_rows;  
 
-                        $up = " UPDATE users SET money_spent = '$money', movies_owned ='$resultCheck' WHERE user_id = '$userid';";
-                        $run = mysqli_query($conex,$up); 
+                        $stmt = $conex->prepare("UPDATE users SET money_spent = ?, movies_owned = ? WHERE user_id = ?;");
+                        $stmt->bind_param("dii", $money, $resultCheck, $userid);
+                        $stmt->execute();
 
-                        $mquery = "SELECT movie_name FROM movies WHERE movie_id = '$movieid';";
-                        $mresult = mysqli_query($conex,$mquery);
-                        $mrow = mysqli_fetch_assoc($mresult);
+                        $stmt = $conex->prepare("SELECT movie_name FROM movies WHERE movie_id = ?;");
+                        $stmt->bind_param("i", $movieid);
+                        $stmt->execute();
+                        $mresult = $stmt->get_result();
+                        $mrow = $mresult->fetch_assoc();
                         $mname = $mrow['movie_name'];
     
-                        $uquery = "SELECT username FROM users WHERE user_id = '$userid';";
-                        $uresult = mysqli_query($conex,$uquery);
-                        $urow = mysqli_fetch_assoc($uresult);
+                        $stmt = $conex->prepare("SELECT username FROM users WHERE user_id = ?;");
+                        $stmt->bind_param("i", $userid);
+                        $stmt->execute();
+                        $uresult = $stmt->get_result();
+                        $urow = $uresult->fetch_assoc();
                         $user = $urow['username'];
         ?>                
     <table class="body-wrap">

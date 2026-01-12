@@ -4,29 +4,34 @@
 ?>
     <main>
     <?php
-        if($_GET['sid']) {
-            require_once ('../backend/conecdb.php');
-                        
-            $sid = $_GET['sid'];
-            $query = "SELECT * FROM sales WHERE sales_id = '$sid';";
-            $result = mysqli_query($conex,$query);
-            $resultCheck = mysqli_num_rows($result); 
+        if(isset($_GET['sid']) && is_numeric($_GET['sid'])) {
+            $sid = intval($_GET['sid']);
+            
+            // Get sale information
+            $stmt = $conex->prepare("SELECT * FROM sales WHERE sales_id = ?");
+            $stmt->bind_param("i", $sid);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-            if($resultCheck > 0){
-               $row = mysqli_fetch_assoc($result);
-                    $mid = $row['movie_id'];
-                    $uid = $row['user_id'];
+            if($row = $result->fetch_assoc()){
+                $mid = $row['movie_id'];
+                $uid = $row['user_id'];
 
-                    $mquery = "SELECT movie_name FROM movies WHERE movie_id = '$mid';";
-                    $mresult = mysqli_query($conex,$mquery);
-                    $mrow = mysqli_fetch_assoc($mresult);
-                    $mname = $mrow['movie_name'];
+                // Get movie name
+                $stmt = $conex->prepare("SELECT movie_name FROM movies WHERE movie_id = ?");
+                $stmt->bind_param("i", $mid);
+                $stmt->execute();
+                $mresult = $stmt->get_result();
+                $mrow = $mresult->fetch_assoc();
+                $mname = $mrow['movie_name'];
 
-                    $uquery = "SELECT username FROM users WHERE user_id = '$uid';";
-                    $uresult = mysqli_query($conex,$uquery);
-                    $urow = mysqli_fetch_assoc($uresult);
-                    $user = $urow['username'];
-            }
+                // Get username
+                $stmt = $conex->prepare("SELECT username FROM users WHERE user_id = ?");
+                $stmt->bind_param("i", $uid);
+                $stmt->execute();
+                $uresult = $stmt->get_result();
+                $urow = $uresult->fetch_assoc();
+                $user = $urow['username'];
 
         ?>
     <table class="body-wrap">
@@ -40,26 +45,26 @@
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tbody><tr>
                                     <td class="content-block">
-                                        <h2>Sale <?php echo $sid; ?></h2>
+                                        <h2>Sale <?php echo htmlspecialchars($sid); ?></h2>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="content-block">
                                         <table class="invoice">
                                             <tbody><tr>
-                                                <td>User: <?php echo $user; ?><br>Date: <?php echo $row['sales_date']; ?> <br>Account Number: <?php echo $row['card_number']; ?> <br>Name on Card: <?php echo $row['card_name']; ?> <br>Payment Method: <?php echo $row['payment_method']; ?></td>
+                                                <td>User: <?php echo htmlspecialchars($user); ?><br>Date: <?php echo htmlspecialchars($row['sales_date']); ?> <br>Account Number: <?php echo htmlspecialchars($row['card_number']); ?> <br>Name on Card: <?php echo htmlspecialchars($row['card_name']); ?> <br>Payment Method: <?php echo htmlspecialchars($row['payment_method']); ?></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <table class="invoice-items" cellpadding="0" cellspacing="0">
                                                         <tbody><tr>
-                                                            <td> <?php echo $mname; ?></td>
-                                                            <td class="alignright">$ <?php echo $row['amount']; ?></td>
+                                                            <td> <?php echo htmlspecialchars($mname); ?></td>
+                                                            <td class="alignright">$ <?php echo htmlspecialchars($row['amount']); ?></td>
                                                         </tr>
                                                         
                                                         <tr class="total">
                                                             <td class="alignright" width="80%">Total</td>
-                                                            <td class="alignright">$ <?php echo $row['amount']; ?></td>
+                                                            <td class="alignright">$ <?php echo htmlspecialchars($row['amount']); ?></td>
                                                         </tr>
                                                     </tbody></table>
                                                 </td>
@@ -84,9 +89,9 @@
     </tr>
     </tbody></table>
     <?php
-
-}
-?>
+            }
+        }
+    ?>
    
 
     </main>                

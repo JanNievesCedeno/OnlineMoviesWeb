@@ -1,0 +1,106 @@
+# 🎬 OnlineMoviesWeb
+
+A comprehensive web-based movie store platform built with PHP and MySQL. Users can browse, purchase, and manage their digital movie collection with an integrated admin panel for inventory and sales management.
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Security Features](#security-features)
+- [Admin Panel](#admin-panel)
+- [Contributing](#contributing)
+
+## ✨ Features
+
+### User Features
+
+- **User Authentication**
+
+  - User registration with encrypted passwords
+  - Secure login/logout functionality
+  - Session management
+
+- **Movie Browsing**
+
+  - Browse movies by categories (Action, Comedy, Drama, Documentary, Musical, Romance, Horror)
+  - Search functionality to find specific movies
+  - View detailed movie information (description, trailer, year, genre, price)
+  - Embedded YouTube trailers
+
+- **Shopping & Checkout**
+
+  - Add movies to cart
+  - Secure checkout process with payment simulation
+  - Payment method selection (Credit/Debit Card)
+  - Purchase receipts generation
+
+- **Personal Library**
+
+  - View purchased movies in personal library
+  - Track spending and movie collection
+
+- **User Account**
+  - View account information
+  - Track total money spent
+  - See number of movies owned
+
+### Admin Features
+
+- **Dashboard**
+
+  - Comprehensive overview of users, movies, and sales
+
+- **User Management**
+
+  - Add, edit, and delete users
+  - View user information and purchase history
+  - Generate user reports (PDF)
+  - Track user expenses
+
+- **Movie Management**
+
+  - Add new movies to inventory
+  - Edit movie details
+  - Delete movies
+  - Manage movie stock quantities
+  - Bulk update movie inventory
+  - Generate inventory reports (PDF)
+
+- **Sales Management**
+
+  - View all transactions
+  - Edit sale information
+  - Delete sales records
+  - Generate sales reports (PDF)
+  - View payment information
+  - Generate total earnings reports
+
+- **Reporting**
+  - PDF report generation using TCPDF library
+  - User view reports
+  - User expense reports
+  - Movie inventory reports
+  - Sales reports
+  - Payment information reports
+  - Total revenue reports
+
+## 🛠️ Technologies Used
+
+- **Backend:** PHP 7.4+
+- **Database:** MySQL/MariaDB
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Libraries:**
+  - TCPDF for PDF generation
+  - Font Awesome for icons
+  - Bootstrap (admin panel)
+- **Security:**
+  - Prepared statements (SQL injection protection)
+  - Password hashing (bcrypt)
+  - Session management
+  - Input validation

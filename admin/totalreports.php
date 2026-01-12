@@ -4,24 +4,28 @@ function fetch_data ()
 {
     require_once ('../backend/conecdb.php');
     $output = '';
-    $total = "SELECT SUM(amount) as total FROM sales;";
-    $result = mysqli_query($conex,$total);
-    $row = mysqli_fetch_assoc($result);
+    
+    // Get total earnings
+    $stmt = $conex->prepare("SELECT SUM(amount) as total FROM sales");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
     $total = $row['total'];
-    $query = "SELECT sales_id FROM sales;";
-    $result = mysqli_query($conex,$query);
-    $resultCheck = mysqli_num_rows($result);
-    if($resultCheck > 0){
+    
+    // Get total count of sales
+    $stmt = $conex->prepare("SELECT COUNT(*) as count FROM sales");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $salesCount = $row['count'];
 
-        $output .= '<tr>
-            <td> '.$resultCheck.'</td>
-            <td> $ '.$total.'</td>
-            </tr>
-            
-            ';
+    $output .= '<tr>
+        <td> '.$salesCount.'</td>
+        <td> $ '.$total.'</td>
+        </tr>
+        ';
    
     return $output; 
-}
 }
 
 
@@ -56,6 +60,3 @@ function fetch_data ()
     $content .= '</table>';
     $pdf->writeHTML ($content);
     $pdf->Output();
-
-
-

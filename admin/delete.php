@@ -1,58 +1,64 @@
 <?php
     require_once ('layout/superior.php');
+    require_once ('../backend/conecdb.php');
 
-    if($_GET['action'] == "movie") {
-      $action = "movie";
-      $id = $_GET['id'];
-    }  
-    
-    if($_GET['action'] == "user") {
-      $action = "user";
-      $id = $_GET['id'];
-    }
+    $action = '';
+    $id = 0;
 
-    if($_GET['action'] == "sale") {
-      $action = "sale";
-      $id = $_GET['id'];
+    // Validate and sanitize input
+    if(isset($_GET['action']) && isset($_GET['id'])) {
+        $allowedActions = ['movie', 'user', 'sale'];
+        if(in_array($_GET['action'], $allowedActions) && is_numeric($_GET['id'])) {
+            $action = $_GET['action'];
+            $id = intval($_GET['id']);
+        } else {
+            die("Invalid parameters");
+        }
+    } else {
+        die("Missing parameters");
     }
                 
     if($action == "movie"){
-      require_once ('../backend/conecdb.php');
-        $query = "DELETE FROM `movies` WHERE movie_id = '$id';";
-      $result = mysqli_query($conex,$query);
+        $stmt = $conex->prepare("DELETE FROM movies WHERE movie_id = ?");
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
 
-      if($result) {
-        echo '<script> alert("Succesfully deleted!")</script>';
-              echo '<script type="text/javascript">';
-              echo 'window.location= "moviest.php";';
-              echo '</script>';
-      }
+        if($result) {
+            echo '<script> alert("Succesfully deleted!")</script>';
+            echo '<script type="text/javascript">';
+            echo 'window.location= "moviest.php";';
+            echo '</script>';
+            exit();
+        }
     }
 
     if($action == "user"){
-      require_once ('../backend/conecdb.php');
-        $query = "DELETE FROM users WHERE user_id = '$id';";
-      $result = mysqli_query($conex,$query);
+        $stmt = $conex->prepare("DELETE FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
 
-      if($result) {
-        echo '<script> alert("Succesfully deleted!")</script>';
-              echo '<script type="text/javascript">';
-              echo 'window.location= "userst.php";';
-              echo '</script>';
-      }
+        if($result) {
+            echo '<script> alert("Succesfully deleted!")</script>';
+            echo '<script type="text/javascript">';
+            echo 'window.location= "userst.php";';
+            echo '</script>';
+            exit();
+        }
     }
 
     if($action == "sale"){
-      require_once ('../backend/conecdb.php');
-        $query = "DELETE FROM sales WHERE sales_id = '$id';";
-      $result = mysqli_query($conex,$query);
+        $stmt = $conex->prepare("DELETE FROM sales WHERE sales_id = ?");
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
 
-      if($result) {
-        echo '<script> alert("Succesfully deleted!")</script>';
-              echo '<script type="text/javascript">';
-              echo 'window.location= "salest.php";';
-              echo '</script>';
-      }
+        if($result) {
+            echo '<script> alert("Succesfully deleted!")</script>';
+            echo '<script type="text/javascript">';
+            echo 'window.location= "salest.php";';
+            echo '</script>';
+            exit();
+        }
     }
+    
     require_once ('layout/inferior.php');
 ?>

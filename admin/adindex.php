@@ -1,6 +1,7 @@
 <?php
     require_once ('layout/superior.php');
-	
+    require_once ('../backend/conecdb.php');
+    
 ?>
      
 <main>
@@ -40,37 +41,28 @@
                                         </tfoot>
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM users");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM users;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['user_id']}</td>
-                                <td>{$row['user_firstname']}</td>
-                                <td>{$row['user_lastname']}</td>
-                                <td>{$row['username']}</td>
-                                <td><textarea class="txa" name="" id="" cols="20" rows="4" readonly>{$row['password']}</textarea></td>
-                                <td>$ {$row['money_spent']}</td>
-                                <td>{$row['movies_owned']}</td>
-                                <td><a href="interedit.php?action=user&id={$row['user_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=user&id={$row['user_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['user_id']}</td>
+                            <td>{$row['user_firstname']}</td>
+                            <td>{$row['user_lastname']}</td>
+                            <td>{$row['username']}</td>
+                            <td><textarea class="txa" name="" id="" cols="20" rows="4" readonly>{$row['password']}</textarea></td>
+                            <td>$ {$row['money_spent']}</td>
+                            <td>{$row['movies_owned']}</td>
+                            <td><a href="interedit.php?action=user&id={$row['user_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=user&id={$row['user_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>
@@ -119,39 +111,30 @@
                                         
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM movies");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM movies;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['movie_id']}</td>
-                                <td>{$row['movie_amount']}</td>
-                                <td>{$row['movie_name']}</td>
-                                <td>{$row['movie_year']}</td>
-                                <td>{$row['movie_genre']}</td>
-                                <td><textarea class="txa" name="" id="" cols="25" rows="5">{$row['movie_description']}</textarea></td>
-                                <td>$ {$row['movie_cost']}</td>
-                                <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_trailer']}</textarea></td>
-                                <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_picture']}</textarea></td>
-                                <td><a href="interedit.php?action=movie&id={$row['movie_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=movie&id={$row['movie_id']}" onclick="return confirm('Are you sure you want to delete this movie?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['movie_id']}</td>
+                            <td>{$row['movie_amount']}</td>
+                            <td>{$row['movie_name']}</td>
+                            <td>{$row['movie_year']}</td>
+                            <td>{$row['movie_genre']}</td>
+                            <td><textarea class="txa" name="" id="" cols="25" rows="5">{$row['movie_description']}</textarea></td>
+                            <td>$ {$row['movie_cost']}</td>
+                            <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_trailer']}</textarea></td>
+                            <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_picture']}</textarea></td>
+                            <td><a href="interedit.php?action=movie&id={$row['movie_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=movie&id={$row['movie_id']}" onclick="return confirm('Are you sure you want to delete this movie?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>
@@ -198,39 +181,30 @@
                                         </tfoot>
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM sales");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM sales;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['sales_id']}</td>
-                                <td>{$row['user_id']}</td>
-                                <td>{$row['movie_id']}</td>
-                                <td>{$row['sales_date']}</td>
-                                <td>{$row['payment_method']}</td>
-                                <td>{$row['card_number']}</td>
-                                <td>{$row['card_expiration']}</td>
-                                <td>{$row['card_name']}</td>
-                                <td>$ {$row['amount']}</td>
-                                <td><a href="interedit.php?action=sale&id={$row['sales_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=sale&id={$row['sales_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['sales_id']}</td>
+                            <td>{$row['user_id']}</td>
+                            <td>{$row['movie_id']}</td>
+                            <td>{$row['sales_date']}</td>
+                            <td>{$row['payment_method']}</td>
+                            <td>{$row['card_number']}</td>
+                            <td>{$row['card_expiration']}</td>
+                            <td>{$row['card_name']}</td>
+                            <td>$ {$row['amount']}</td>
+                            <td><a href="interedit.php?action=sale&id={$row['sales_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=sale&id={$row['sales_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>

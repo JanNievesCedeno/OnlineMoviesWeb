@@ -1,16 +1,13 @@
 <?php
     require_once ('layout/superior.php');
+    require_once ('../backend/conecdb.php');
 
-    if($_GET['action'] == "movie") {
-        $action = "movie";
-    }
-
-    if($_GET['action'] == "user") {
-        $action = "user";
-    }
-
-    if($_GET['action'] == "movieamount") {
-        $action = "movieamount";
+    $action = '';
+    if(isset($_GET['action'])) {
+        $allowedActions = ['movie', 'user', 'movieamount'];
+        if(in_array($_GET['action'], $allowedActions)) {
+            $action = $_GET['action'];
+        }
     }
 
    
@@ -42,30 +39,30 @@
      </form> 
         <?php
      
-        require_once ('../backend/conecdb.php');
         if(isset($_POST['movie'])) {
-            $mname = '"'.$_POST['mname'].'"';
+            $mname = $_POST['mname'];
             $myear = $_POST['myear'];
             $mgenre = $_POST['mgenre'];
-            $mdesc = '"'.$_POST['mdesc'].'"';
+            $mdesc = $_POST['mdesc'];
             $mcost = $_POST['mcost'];
             $mtrailer = $_POST['mtrailer'];
             $mpic = $_POST['mpic'];
 
-            $query = "INSERT INTO movies (movie_id, movie_name, movie_year, movie_genre, movie_description, movie_cost, movie_trailer, movie_picture) VALUES ('',$mname,'$myear','$mgenre',$mdesc,'$mcost','$mtrailer','$mpic');";
-            $result = mysqli_query($conex,$query);
+            $stmt = $conex->prepare("INSERT INTO movies (movie_name, movie_year, movie_genre, movie_description, movie_cost, movie_trailer, movie_picture) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssdss", $mname, $myear, $mgenre, $mdesc, $mcost, $mtrailer, $mpic);
+            $result = $stmt->execute();
+            
             if($result){
                 echo '<script> alert("Succesfully added!")</script>';
                 echo '<script type="text/javascript">';
                 echo 'window.location= "moviest.php";';
                 echo '</script>';
             } else {
-                echo '<script> alert("Dont accept double quotes!")</script>';
+                echo '<script> alert("Error adding movie!")</script>';
                 echo '<script type="text/javascript">';
-                echo 'window.location.history.back();';
+                echo 'window.history.back();';
                 echo '</script>';
             }
-
         }
         
     }
@@ -91,36 +88,39 @@
      </form> 
         <?php
      
-        require_once ('../backend/conecdb.php');
         if(isset($_POST['user'])) {
-        $fname = '"'.$_POST['fname'].'"';
-        $lname = '"'.$_POST['lname'].'"';
-        $uname = '"'.$_POST['uname'].'"';
-            $query = "SELECT username FROM users;";
-            $result = mysqli_query($conex,$query);
-            $resultCheck = mysqli_num_rows($result);
-            while ($row = mysqli_fetch_assoc($result)) {
+            $fname = $_POST['fname'];
+            $lname = $_POST['lname'];
+            $uname = $_POST['uname'];
             
-            if ($row['username'] == $uname) {
+            // Check if username exists
+            $stmt = $conex->prepare("SELECT username FROM users WHERE username = ?");
+            $stmt->bind_param("s", $uname);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
                 echo '<script> alert("Username taken!")</script>';
                 echo '<script type="text/javascript">';
                 echo 'window.history.back();';
                 echo '</script>';
-                die();
-                }
+                exit();
             }
-        $upass = $_POST['upass'];
+            
+            $upass = $_POST['upass'];
+            $encrypted = password_hash($upass, PASSWORD_DEFAULT);
 
-        $encrypted = password_hash($upass, PASSWORD_DEFAULT);
-
-        $query = "INSERT INTO users (user_id, user_firstname, user_lastname, username, password, money_spent, movies_owned) VALUES ('',$fname,$lname,$uname,'$encrypted','','');";
-        $result = mysqli_query($conex,$query);
-        if($result){
-            echo '<script> alert("Succesfully added!")</script>';
-            echo '<script type="text/javascript">';
-            echo 'window.location= "userst.php";';
-            echo '</script>';
-        }
+            // Insert new user
+            $stmt = $conex->prepare("INSERT INTO users (user_firstname, user_lastname, username, password, money_spent, movies_owned) VALUES (?, ?, ?, ?, 0, 0)");
+            $stmt->bind_param("ssss", $fname, $lname, $uname, $encrypted);
+            $result = $stmt->execute();
+            
+            if($result){
+                echo '<script> alert("Succesfully added!")</script>';
+                echo '<script type="text/javascript">';
+                echo 'window.location= "userst.php";';
+                echo '</script>';
+            }
         }
     }
 
@@ -134,31 +134,31 @@
      </form> 
         <?php
      
-        require_once ('../backend/conecdb.php');
         if(isset($_POST['amount'])) {
-
             $namount = $_POST['num'];
         
-            $query = "SELECT movie_id, movie_amount FROM movies WHERE movie_id;";
-            $result = mysqli_query($conex,$query);
-            $resultCheck = mysqli_num_rows($result);
+            // Fetch all movies
+            $stmt = $conex->prepare("SELECT movie_id, movie_amount FROM movies");
+            $stmt->execute();
+            $result = $stmt->get_result();
             
-            while ($row = mysqli_fetch_assoc($result)) {
+            // Update each movie amount
+            $updateStmt = $conex->prepare("UPDATE movies SET movie_amount = ? WHERE movie_id = ?");
+            
+            while ($row = $result->fetch_assoc()) {
                 $mid = $row['movie_id'];
                 $oamount = $row['movie_amount'];
                 $tamount = $namount + $oamount;
 
-                $squery = "UPDATE movies SET movie_amount = '$tamount' WHERE movie_id = '$mid';";
-                $results = mysqli_query($conex,$squery);            
+                $updateStmt->bind_param("ii", $tamount, $mid);
+                $updateStmt->execute();
             }
 
             echo '<script> alert("Succesfully added!")</script>';
             echo '<script type="text/javascript">';
             echo 'window.location= "moviest.php";';
             echo '</script>';
-
         }
-       
     }
 
     require_once ('layout/inferior.php');

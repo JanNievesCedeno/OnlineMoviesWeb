@@ -37,34 +37,25 @@
                                         
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM movies");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM movies;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['movie_id']}</td>                                
-                                <td>{$row['movie_name']}</td>
-                                <td>{$row['movie_year']}</td>
-                                <td>{$row['movie_genre']}</td>                    
-                                <td>$ {$row['movie_cost']}</td>
-                                <td>{$row['movie_amount']}</td>          
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['movie_id']}</td>                                
+                            <td>{$row['movie_name']}</td>
+                            <td>{$row['movie_year']}</td>
+                            <td>{$row['movie_genre']}</td>                    
+                            <td>$ {$row['movie_cost']}</td>
+                            <td>{$row['movie_amount']}</td>          
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>

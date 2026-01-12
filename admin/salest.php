@@ -43,39 +43,30 @@
                                         </tfoot>
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM sales");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM sales;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['sales_id']}</td>
-                                <td>{$row['user_id']}</td>
-                                <td>{$row['movie_id']}</td>
-                                <td>{$row['sales_date']}</td>
-                                <td>{$row['payment_method']}</td>
-                                <td>{$row['card_number']}</td>
-                                <td>{$row['card_expiration']}</td>
-                                <td>{$row['card_name']}</td>
-                                <td>$ {$row['amount']}</td>
-                                <td><a href="interedit.php?action=sale&id={$row['sales_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=sale&id={$row['sales_id']}" onclick="return confirm('Are you sure you want to delete this user?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['sales_id']}</td>
+                            <td>{$row['user_id']}</td>
+                            <td>{$row['movie_id']}</td>
+                            <td>{$row['sales_date']}</td>
+                            <td>{$row['payment_method']}</td>
+                            <td>{$row['card_number']}</td>
+                            <td>{$row['card_expiration']}</td>
+                            <td>{$row['card_name']}</td>
+                            <td>$ {$row['amount']}</td>
+                            <td><a href="interedit.php?action=sale&id={$row['sales_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=sale&id={$row['sales_id']}" onclick="return confirm('Are you sure you want to delete this sale?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>

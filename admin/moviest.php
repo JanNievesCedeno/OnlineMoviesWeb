@@ -46,39 +46,30 @@
                                         
 
                     <?php
-                        require_once ('../backend/conecdb.php');
-                        
+                        $stmt = $conex->prepare("SELECT * FROM movies");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT * FROM movies;";
-                        $result = mysqli_query($conex,$query);
-                        $resultCheck = mysqli_num_rows($result); 
-
-                        if($resultCheck > 0){
-                            while ($row = mysqli_fetch_assoc($result)) {
-
-                                $product = <<< DELIMETER
-                                <tbody id="trows">
-                                <tr>
-                                <td>{$row['movie_id']}</td>
-                                <td>{$row['movie_amount']}</td>
-                                <td>{$row['movie_name']}</td>
-                                <td>{$row['movie_year']}</td>
-                                <td>{$row['movie_genre']}</td>
-                                <td><textarea class="txa" name="" id="" cols="25" rows="5">{$row['movie_description']}</textarea></td>
-                                <td>$ {$row['movie_cost']}</td>
-                                <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_trailer']}</textarea></td>
-                                <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_picture']}</textarea></td>
-                                <td><a href="interedit.php?action=movie&id={$row['movie_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=movie&id={$row['movie_id']}" onclick="return confirm('Are you sure you want to delete this movie?');">delete</a></td>
-                                
-                                </tr>                                        
-                                </tbody>
-                                DELIMETER;
-                                echo $product;
-                            }
-
-
+                        while ($row = $result->fetch_assoc()) {
+                            $product = <<< DELIMETER
+                            <tbody id="trows">
+                            <tr>
+                            <td>{$row['movie_id']}</td>
+                            <td>{$row['movie_amount']}</td>
+                            <td>{$row['movie_name']}</td>
+                            <td>{$row['movie_year']}</td>
+                            <td>{$row['movie_genre']}</td>
+                            <td><textarea class="txa" name="" id="" cols="25" rows="5">{$row['movie_description']}</textarea></td>
+                            <td>$ {$row['movie_cost']}</td>
+                            <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_trailer']}</textarea></td>
+                            <td><textarea class="txa" name="" id="" cols="18" rows="5">{$row['movie_picture']}</textarea></td>
+                            <td><a href="interedit.php?action=movie&id={$row['movie_id']}">edit</a>&nbsp&nbsp&nbsp<a href="delete.php?action=movie&id={$row['movie_id']}" onclick="return confirm('Are you sure you want to delete this movie?');">delete</a></td>
+                            
+                            </tr>                                        
+                            </tbody>
+                            DELIMETER;
+                            echo $product;
                         }
-
                     ?> 
                                         
                                     </table>
