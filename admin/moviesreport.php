@@ -59,11 +59,4 @@ function fetch_data ()
     $content .= fetch_data();
     $content .= '</table>';
     $pdf->writeHTML ($content);
-<<<<<<< HEAD
     $pdf->Output();
-
-
-
-=======
-    $pdf->Output();
->>>>>>> main
