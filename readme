@@ -4,44 +4,39 @@ A comprehensive web-based movie store platform built with PHP and MySQL. Users c
 
 ## 📋 Table of Contents
 
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Database Setup](#database-setup)
-- [Running the Application](#running-the-application)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Security Features](#security-features)
-- [Admin Panel](#admin-panel)
-- [Contributing](#contributing)
+- [Demo](#-demo)
+- [User Features](#user-features)
+- [Admin Features](#admin-features)
+- [Technologies Used](#️-technologies-used)
+---
 
-## ✨ Features
+## 🎬 Demo
 
-### User Features
+### Application Walkthrough
+[![OnlineMoviesWeb Demo](https://img.youtube.com/vi/7FtVBAl0g8w/maxresdefault.jpg)](https://www.youtube.com/watch?v=7FtVBAl0g8w)
+---
+
+
+## User Features
 
 - **User Authentication**
-
   - User registration with encrypted passwords
   - Secure login/logout functionality
   - Session management
 
 - **Movie Browsing**
-
   - Browse movies by categories (Action, Comedy, Drama, Documentary, Musical, Romance, Horror)
   - Search functionality to find specific movies
   - View detailed movie information (description, trailer, year, genre, price)
   - Embedded YouTube trailers
 
 - **Shopping & Checkout**
-
   - Add movies to cart
   - Secure checkout process with payment simulation
   - Payment method selection (Credit/Debit Card)
   - Purchase receipts generation
 
 - **Personal Library**
-
   - View purchased movies in personal library
   - Track spending and movie collection
 
@@ -49,22 +44,20 @@ A comprehensive web-based movie store platform built with PHP and MySQL. Users c
   - View account information
   - Track total money spent
   - See number of movies owned
+---
 
-### Admin Features
+## Admin Features
 
 - **Dashboard**
-
   - Comprehensive overview of users, movies, and sales
 
 - **User Management**
-
   - Add, edit, and delete users
   - View user information and purchase history
   - Generate user reports (PDF)
   - Track user expenses
 
 - **Movie Management**
-
   - Add new movies to inventory
   - Edit movie details
   - Delete movies
@@ -73,7 +66,6 @@ A comprehensive web-based movie store platform built with PHP and MySQL. Users c
   - Generate inventory reports (PDF)
 
 - **Sales Management**
-
   - View all transactions
   - Edit sale information
   - Delete sales records
@@ -89,6 +81,7 @@ A comprehensive web-based movie store platform built with PHP and MySQL. Users c
   - Sales reports
   - Payment information reports
   - Total revenue reports
+---
 
 ## 🛠️ Technologies Used
 
