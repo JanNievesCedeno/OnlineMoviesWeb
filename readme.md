@@ -4,7 +4,7 @@ A comprehensive web-based movie store platform built with PHP and MySQL. Users c
 
 ## 📋 Table of Contents
 
-- [Demo](#🎬-demo)
+- [Demo](#-demo)
 - [User Features](#user-features)
 - [Admin Features](#admin-features)
 - [Technologies Used](#️-technologies-used)
